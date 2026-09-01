@@ -8,9 +8,10 @@ public class MainConsole {
         DJController controller = new DJController();
         Scanner scanner = new Scanner(System.in);
         
-        controller.adicionarInstrumento("Bateria", "sounds/bateria.wav", 120);
-        controller.adicionarInstrumento("Baixo", "sounds/baixo.wav", 110);
+        controller.adicionarInstrumento("Drums", "sounds/drums.wav", 130);
+        controller.adicionarInstrumento("Bass", "sounds/bass.wav", 130);
         controller.adicionarInstrumento("Synth", "sounds/synth.wav", 130);
+        controller.adicionarInstrumento("Guitar", "sounds/guitar.wav", 130);
         
         System.out.println("\n=== 🎧 DJ MIXER CONSOLE ===");
         System.out.println("Comandos:");
@@ -72,12 +73,12 @@ public class MainConsole {
                 case "exit":
                     controller.finalizar();
                     scanner.close();
-                    System.out.println("👋 Até logo!");
+                    System.out.println(" Até logo!");
                     System.exit(0);
                     break;
                     
                 default:
-                    System.out.println("❌ Comando desconhecido");
+                    System.out.println("Comando desconhecido");
             }
         }
     }

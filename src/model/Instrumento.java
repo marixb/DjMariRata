@@ -1,12 +1,13 @@
 package model;
 
 public class Instrumento implements Runnable {
-    private String nome;
-    private AudioPlayer audioPlayer;
+    private final String nome;
+    private final AudioPlayer audioPlayer;
     private volatile boolean rodando;
-    private boolean pausado;
-    private int bpm;
+    private volatile boolean pausado;
+    private volatile int bpm;
     private Thread thread;
+    private final Object lock = new Object();
 
     public Instrumento(String nome, String arquivoSom, int bpm) {
         this.nome = nome;
@@ -19,101 +20,74 @@ public class Instrumento implements Runnable {
     @Override
     public void run() {
         while (rodando) {
-            int tempoEspera;
-
-            synchronized (this) {
-                while (pausado && rodando) {
-                    audioPlayer.pausar();
-                    try {
-                        this.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        audioPlayer.parar();
-                        return;
-                    }
-                }
-
-                if (!rodando) {
+            if (!pausado) {
+                audioPlayer.tocar();
+                int tempoEspera = 60000 / bpm;
+                try {
+                    Thread.sleep(tempoEspera);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
-
-                audioPlayer.tocar();
-                tempoEspera = 60000 / bpm;
-            }
-
-            try {
-                Thread.sleep(tempoEspera);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
+            } else {
+                audioPlayer.pausar();
+                synchronized (lock) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
             }
         }
         audioPlayer.parar();
     }
 
-    public synchronized void iniciar() {
+    public void iniciar() {
         if (thread == null || !thread.isAlive()) {
             thread = new Thread(this);
             thread.setName(nome);
+            thread.setDaemon(true);
             thread.start();
             System.out.println("🎵 " + nome + " iniciado!");
         }
     }
 
-    public synchronized void alternarPausa() {
-        if (pausado) {
-            pausado = false;
-            this.notifyAll();
+    public void alternarPausa() {
+        pausado = !pausado;
+        if (!pausado) {
+            synchronized (lock) {
+                lock.notify();
+            }
             System.out.println("▶ " + nome + " retomado!");
         } else {
-            pausado = true;
             System.out.println("⏸ " + nome + " pausado!");
         }
     }
 
     public void parar() {
-        Thread threadLocal;
-        synchronized (this) {
-            rodando = false;
-            pausado = false;
-            this.notifyAll();
-            threadLocal = thread;
+        rodando = false;
+        pausado = false; 
+        synchronized (lock) {
+            lock.notify();
         }
-
-        try {
-            if (threadLocal != null && threadLocal.isAlive()) {
-                threadLocal.interrupt();
-                threadLocal.join(1000);
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        if (thread != null) {
+            thread.interrupt();
         }
         System.out.println("⏹ " + nome + " finalizado!");
     }
 
-    public synchronized String getNome() {
-        return nome;
-    }
-
-    public synchronized boolean isPausado() {
-        return pausado;
-    }
-
-    public boolean isRodando() {
-        return rodando;
-    }
-
-    public synchronized int getBpm() {
-        return bpm;
-    }
-
-    public synchronized void setBpm(int bpm) {
+    public String getNome() { return nome; }
+    public boolean isPausado() { return pausado; }
+    public boolean isRodando() { return rodando; }
+    public int getBpm() { return bpm; }
+    public void setBpm(int bpm) {
         this.bpm = bpm;
-        System.out.println("🔁 BPM do " + nome + " alterado para " + bpm);
+        System.out.println("BPM do " + nome + " alterado para " + bpm);
     }
-
-    public synchronized String getStatus() {
-        if (!rodando) return "❌ PARADO";
+    public String getStatus() {
+        if (!rodando) return " PARADO";
         return pausado ? "⏸ PAUSADO" : "▶ TOCANDO";
     }
 }

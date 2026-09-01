@@ -99,12 +99,11 @@ public class DJInterface extends JFrame {
 
     private void carregarInstrumentosIniciais() {
         String[][] instrumentosIniciais = {
-            {"Bateria", "sounds/bateria.wav", "130"},
-            {"Baixo", "sounds/baixo.wav", "130"},
+            {"Bateria", "sounds/drums.wav", "130"},
+            {"Baixo", "sounds/bass.wav", "130"},
             {"Synth", "sounds/synth.wav", "130"},
-            {"Guitarra", "sounds/guitarra.wav", "130"}
+            {"Guitarra", "sounds/guitar.wav", "130"}
         };
-
         for (String[] inst : instrumentosIniciais) {
             controller.adicionarInstrumento(inst[0], inst[1], Integer.parseInt(inst[2]));
             criarLinhaInstrumento(inst[0], Integer.parseInt(inst[2]));
