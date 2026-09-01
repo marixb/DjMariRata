@@ -13,7 +13,6 @@ Aplicação Java que simula uma mesa de DJ, onde cada instrumento (Bateria, Baix
 
 ## Estrutura do projeto
 
-\`\`\`
 DjMariRata/
 ├── src/
 │   ├── model/
@@ -31,7 +30,6 @@ DjMariRata/
 │   ├── synth.wav
 │   └── guitarra.wav
 └── README.md
-\`\`\`
 
 ## Requisitos
 
