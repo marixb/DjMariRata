@@ -6,13 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DJController {
     private Map<String, Instrumento> instrumentos;
-    private Thread threadStatus;
-    private boolean statusRodando;
     
     public DJController() {
         this.instrumentos = new ConcurrentHashMap<>();
-        this.statusRodando = true;
-        iniciarThreadStatus();
     }
 
     public synchronized void adicionarInstrumento(String nome, String arquivoSom, int bpm) {
@@ -70,27 +66,7 @@ public class DJController {
         System.out.println("=====================\n");
     }
     
-    private void iniciarThreadStatus() {
-        threadStatus = new Thread(() -> {
-            while (statusRodando) {
-                try {
-                    Thread.sleep(3000); // Atualiza a cada 3 segundos
-                    mostrarStatus();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        });
-        threadStatus.setDaemon(true);
-        threadStatus.start();
-    }
-    
     public synchronized void finalizar() {
-        statusRodando = false;
-        if (threadStatus != null) {
-            threadStatus.interrupt();
-        }
         
         for (Instrumento inst : instrumentos.values()) {
             inst.parar();
