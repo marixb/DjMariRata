@@ -13,23 +13,25 @@ Aplicação Java que simula uma mesa de DJ, onde cada instrumento (Bateria, Baix
 
 ## Estrutura do projeto
 
+```
 DjMariRata/
 ├── src/
-│ ├── model/
-│ │ ├── Instrumento.java # Thread de cada instrumento (lógica de tocar/pausar/parar)
-│ │ └── AudioPlayer.java # Reprodução do áudio (.wav) via javax.sound.sampled
-│ ├── controller/
-│ │ └── DJController.java # Gerencia os instrumentos e a thread de status
-│ ├── view/
-│ │ └── DJInterface.java # Interface gráfica (Swing)
-│ └── main/
-│ └── MainConsole.java # Ponto de entrada via console
+│   ├── model/
+│   │   ├── Instrumento.java
+│   │   └── AudioPlayer.java
+│   ├── controller/
+│   │   └── DJController.java
+│   ├── view/
+│   │   └── DJInterface.java
+│   └── main/
+│       └── MainConsole.java
 ├── sounds/
-│ ├── bateria.wav
-│ ├── baixo.wav
-│ ├── synth.wav
-│ └── guitarra.wav
+│   ├── bateria.wav
+│   ├── baixo.wav
+│   ├── synth.wav
+│   └── guitarra.wav
 └── README.md
+```
 
 ## Requisitos
 
